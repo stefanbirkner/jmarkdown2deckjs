@@ -46,3 +46,12 @@ Create the Presentation
 
     String markdown = readMarkdown(); //your code that reads the markdown
     String deckJsHtml = new JMarkdown2DeckJs().convert(markdown);
+
+JMarkdown2DeckJs uses relative URLs for the CSS and JavaScript files by default. You can create HTML files with
+different URLs by providing a configuration with a prefix for the URLs.
+
+    import com.github.stefanbirkner.jmarkdown2deckjs.*;
+
+    Configuration configuration = new Configuration("http://your.domain/");
+    String markdown = readMarkdown(); //your code that reads the markdown
+    String deckJsHtml = new JMarkdown2DeckJs(configuration).convert(markdown);

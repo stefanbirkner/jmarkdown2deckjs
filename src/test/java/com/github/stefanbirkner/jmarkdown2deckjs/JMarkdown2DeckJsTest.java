@@ -11,13 +11,19 @@ import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
 public class JMarkdown2DeckJsTest {
-    private final JMarkdown2DeckJs jMarkdown2DeckJs = new JMarkdown2DeckJs();
-
     @Test
     public void convertsThreeSlides() throws Exception {
         String markdown = getResource("threeSlides.md");
-        String html = jMarkdown2DeckJs.convert(markdown);
+        String html = new JMarkdown2DeckJs().convert(markdown);
         assertThat(html, is(equalTo(getResource("threeSlides.html"))));
+    }
+
+    @Test
+    public void convertsThreeSlidesWithUrlPrefix() throws Exception {
+        Configuration configuration = new Configuration("http://dummy.domain/");
+        String markdown = getResource("threeSlides.md");
+        String html = new JMarkdown2DeckJs(configuration).convert(markdown);
+        assertThat(html, is(equalTo(getResource("threeSlidesWithUrlPrefix.html"))));
     }
 
     private String getResource(String name) throws IOException {

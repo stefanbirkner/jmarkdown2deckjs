@@ -34,14 +34,33 @@ import static java.util.Arrays.asList;
  * String markdown = readMarkdown(); //your code that reads the markdown
  * String deckJsHtml = new JMarkdown2DeckJs().convert(markdown);
  * </pre>
+ * <p>JMarkdown2DeckJs uses relative URLs for the CSS and JavaScript files by
+ * default. You can create HTML files with different URLs by providing a
+ * configuration with a prefix for the URLs.
+ * <pre>
+ * Configuration configuration = new Configuration("http://your.domain/");
+ * String markdown = readMarkdown(); //your code that reads the markdown
+ * String deckJsHtml = new JMarkdown2DeckJs(configuration).convert(markdown);
+ * </pre>
  *
- * @since 1.0.0
+ * @since 0.1.0
  */
 public class JMarkdown2DeckJs {
+    private static final String NO_URL_PREFIX = "";
+    private static final Configuration DEFAULT_CONFIGURATION = new Configuration(NO_URL_PREFIX);
     private static final String SLIDE_END_TAG = "</section>\n";
     private static final String SLIDE_START_TAG = "<section class=\"slide\">\n";
 
     private static final String TEMPLATE = readTemplate();
+    private final Configuration configuration;
+
+    public JMarkdown2DeckJs() {
+        this(DEFAULT_CONFIGURATION);
+    }
+
+    public JMarkdown2DeckJs(Configuration configuration) {
+        this.configuration = configuration;
+    }
 
     private static String readTemplate() {
         InputStream resource = JMarkdown2DeckJs.class.getResourceAsStream("boilerplate.html");
@@ -60,7 +79,8 @@ public class JMarkdown2DeckJs {
      */
     public String convert(String markdown) {
         String htmlContent = convertMarkdownToHtml(markdown);
-        return TEMPLATE.replace("{{slides}}", htmlContent);
+        String templateWithFinalUrls = TEMPLATE.replace("{{urlprefix}}", configuration.getCssAndJavaScriptUrlPrefix());
+        return templateWithFinalUrls.replace("{{slides}}", htmlContent);
     }
 
     private String convertMarkdownToHtml(String markdown) {
